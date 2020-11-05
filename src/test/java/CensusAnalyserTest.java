@@ -45,7 +45,7 @@ public class CensusAnalyserTest {
             expectedException.expect(CensusAnalyserException.class);
             censusAnalyser.loadIndiaCensusData(WRONG_INDIA_CENSUS_CSV_FILE_TYPE);
         } catch (CensusAnalyserException censusAnalyserException) {
-            Assert.assertEquals(CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE, censusAnalyserException.exceptionType);
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.NO_SUCH_FILE, censusAnalyserException.exceptionType);
         }
     }
 
@@ -104,7 +104,7 @@ public class CensusAnalyserTest {
             expectedException.expect(CensusAnalyserException.class);
             censusAnalyser.loadStateCodeData(WRONG_STATE_CODE_CSV_FILE_TYPE);
         } catch (CensusAnalyserException censusAnalyserException) {
-            Assert.assertEquals(CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE, censusAnalyserException.exceptionType);
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.NO_SUCH_FILE, censusAnalyserException.exceptionType);
         }
     }
 

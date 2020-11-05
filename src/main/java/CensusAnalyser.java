@@ -11,35 +11,27 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser extends Throwable {
 
-    int numberOfRecords;
-
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             Iterator<IndianCensusCSV> iterator = this.getCSVFileIterator(reader, IndianCensusCSV.class);
-            Iterable<IndianCensusCSV> iterable = () -> iterator;
-            numberOfRecords = (int) StreamSupport.stream(iterable.spliterator(), false).count();
-        } catch (NoSuchFileException noSuchFileException) {
-            if (!csvFilePath.contains(".csv"))
-                throw new CensusAnalyserException("Please enter proper file type", CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
+            return getCount(iterator);
         } catch (IOException ioException) {
             throw new CensusAnalyserException("Enter proper file path", CensusAnalyserException.ExceptionType.NO_SUCH_FILE);
-        } catch (RuntimeException runtimeException) {
-            throw new CensusAnalyserException("Exception due to incorrect delimiter position", CensusAnalyserException.ExceptionType.NO_SUCH_FIELD);
         }
-        return numberOfRecords;
     }
 
     public int loadStateCodeData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             Iterator<StateCodesCSV> iterator = this.getCSVFileIterator(reader, StateCodesCSV.class);
-            Iterable<StateCodesCSV> iterable = () -> iterator;
-            numberOfRecords = (int) StreamSupport.stream(iterable.spliterator(), false).count();
-        } catch (NoSuchFileException noSuchFileException) {
-            if (!csvFilePath.contains(".csv"))
-                throw new CensusAnalyserException("Please enter proper file type", CensusAnalyserException.ExceptionType.WRONG_FILE_TYPE);
+            return getCount(iterator);
         } catch (IOException ioException) {
             throw new CensusAnalyserException("Enter proper file path", CensusAnalyserException.ExceptionType.NO_SUCH_FILE);
         }
+    }
+
+    private <E> int getCount(Iterator<E> iterator) {
+        Iterable<E> iterable = () -> iterator;
+        int numberOfRecords = (int) StreamSupport.stream(iterable.spliterator(), false).count();
         return numberOfRecords;
     }
 
