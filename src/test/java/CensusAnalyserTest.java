@@ -10,6 +10,8 @@ public class CensusAnalyserTest {
     private static final String WRONG_DELIMITER = "C:\\Users\\Shravya\\Desktop\\StateCensusData.csv";
     private static final String NO_HEADER = "C:\\Users\\Shravya\\Desktop\\StateCensusData.csv";
 
+    private static final String STATE_CODE_CSV_FILE_PATH = "C:\\Users\\Shravya\\Desktop\\StateCode.csv";
+
     @Test
     public void givenIndianCensusCSV_WhenFileReturnsCorrectNumberOfRecords_ShouldReturnNumberOfRecords() {
         try {
@@ -67,6 +69,15 @@ public class CensusAnalyserTest {
             Assert.assertEquals(CensusAnalyserException.ExceptionType.NO_SUCH_FIELD, censusAnalyserException.exceptionType);
         }
 
+    }
+
+    @Test
+    public void givenStateCodeCSV_WhenFileReturnsCorrectNumberOfRecords_ShouldReturnNumberOfRecords() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            int numberOfRecords = censusAnalyser.loadIndiaCensusData(STATE_CODE_CSV_FILE_PATH);
+            Assert.assertEquals(37, numberOfRecords);
+        } catch(CensusAnalyserException ignored) { }
     }
 
 }
