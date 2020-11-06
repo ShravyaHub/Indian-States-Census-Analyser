@@ -3,15 +3,20 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-public class CommonsCSVBuilder<E>  {
+public class CommonsCSVBuilder implements ICommonsCSVBuilder {
 
-    public Iterable<CSVRecord> getCSVFileIterator(Reader reader) throws CSVBuilderException, IOException {
+    @Override
+    public List<CSVRecord> getCSVFileList(Reader reader) throws CensusAnalyserException {
         try {
             Iterable<CSVRecord> csvIterator = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(reader);
-            return csvIterator;
-        } catch (IllegalArgumentException illegalArgumentException) {
-            throw new CSVBuilderException("Exception due to incorrect delimiter position", CSVBuilderException.ExceptionType.NO_SUCH_FIELD);
+            return StreamSupport.stream(csvIterator.spliterator(), false).collect(Collectors.toList());
+        } catch (IllegalArgumentException | IOException illegalArgumentException) {
+            throw new CensusAnalyserException("Exception due to incorrect delimiter position", CensusAnalyserException.ExceptionType.NO_SUCH_FIELD);
         }
     }
 }
