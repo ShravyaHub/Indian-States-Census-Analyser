@@ -3,7 +3,9 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -53,6 +55,28 @@ public class CensusAnalyser {
         this.sort(stateCodesCSVList, stateCodeComparator);
         String sortedStateCodeJson = new Gson().toJson(stateCodesCSVList);
         return sortedStateCodeJson;
+    }
+
+    public String getPopulationWiseStateCensusData() throws CensusAnalyserException {
+        if(indianCensusCSVList == null || indianCensusCSVList.size() == 0)
+            throw new CensusAnalyserException("No census data", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        Comparator<IndianCensusCSV> stateCensusComparator = Comparator.comparing(stateCensus -> stateCensus.population);
+        this.sortPopulation(indianCensusCSVList, stateCensusComparator);
+        String sortedStateCensusJson = new Gson().toJson(indianCensusCSVList);
+        return sortedStateCensusJson;
+    }
+
+    private <E> void sortPopulation(List<E> csvList, Comparator<E> comparator) {
+        for (int i = 0; i < csvList.size() - 1; i++) {
+            for (int j = 0; j < csvList.size() - i - 1; j++) {
+                E census1 = csvList.get(j);
+                E census2 = csvList.get(j + 1);
+                if (comparator.compare(census1, census2) < 0) {
+                    csvList.set(j, census2);
+                    csvList.set(j + 1, census1);
+                }
+            }
+        }
     }
 
     private <E> void sort(List<E> csvList, Comparator<E> comparator) {
