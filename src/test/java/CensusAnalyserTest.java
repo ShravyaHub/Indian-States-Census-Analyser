@@ -3,6 +3,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.nio.file.Paths;
+
 public class CensusAnalyserTest {
 
     private static final String INDIA_CENSUS_CSV_FILE_PATH = "C:\\Users\\Shravya\\Desktop\\StateCensusData.csv";
@@ -156,6 +158,19 @@ public class CensusAnalyserTest {
             String sortedCensusData = censusAnalyser.getStateCodeWiseSortedCensusData();
             StateCodesCSV[] stateCodesCSVS = new Gson().fromJson(sortedCensusData, StateCodesCSV[].class);
             Assert.assertEquals("AD", stateCodesCSVS[0].tin);
+        } catch (CensusAnalyserException censusAnalyserException) {
+            censusAnalyserException.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedByPopulation_ShouldReturnSortedOrder() {
+        try {
+            CensusAnalyser censusAnalyzer = new CensusAnalyser();
+            censusAnalyzer.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            String stateCensusDataSortedByPopulation = censusAnalyzer.getPopulationWiseStateCensusData();
+            IndianCensusCSV[] indianCensusCSV = new Gson().fromJson(stateCensusDataSortedByPopulation, IndianCensusCSV[].class);
+            Assert.assertEquals("Uttar Pradesh", indianCensusCSV[0].state);
         } catch (CensusAnalyserException censusAnalyserException) {
             censusAnalyserException.printStackTrace();
         }
