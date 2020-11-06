@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -132,6 +133,19 @@ public class CensusAnalyserTest {
             Assert.assertEquals(CensusAnalyserException.ExceptionType.NO_SUCH_FIELD, censusAnalyserException.exceptionType);
         }
 
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnState_ShouldReturnSortedResult()  {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getStateWiseSortedCensusData();
+            IndianCensusCSV[] indianCensusCSV = new Gson().fromJson(sortedCensusData, IndianCensusCSV[].class);
+            Assert.assertEquals("Andhra Pradesh", indianCensusCSV[0].state);
+        } catch (CensusAnalyserException censusAnalyserException) {
+            censusAnalyserException.printStackTrace();
+        }
     }
 
 }
