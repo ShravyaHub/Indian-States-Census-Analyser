@@ -1,12 +1,11 @@
 import com.google.gson.Gson;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -78,12 +77,25 @@ public class CensusAnalyser {
 
     public String getDensityWiseStateCensusData() throws CensusAnalyserException {
         if (indianCensusCSVList == null || indianCensusCSVList.size() == 0)
-            throw new CensusAnalyserException("No CSV Data Found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+            throw new CensusAnalyserException("No census data", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         Comparator<IndianCensusCSV> stateCensusComparator = Comparator.comparing(stateCensus -> stateCensus.densityPerSqKm);
         this.sortPopulation(indianCensusCSVList, stateCensusComparator);
         String sortedStateCensusJson = new Gson().toJson(indianCensusCSVList);
         return sortedStateCensusJson;
     }
+
+    public String getAreaWiseStateCensusData() throws CensusAnalyserException, IOException {
+        if(indianCensusCSVList == null || indianCensusCSVList.size() == 0)
+            throw new CensusAnalyserException("No census data", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        Comparator<IndianCensusCSV> stateCensusComparator = Comparator.comparing(stateCensus -> stateCensus.areaInSqKm);
+        this.sortPopulation(indianCensusCSVList, stateCensusComparator);
+        String sortedStateCensusJson = new Gson().toJson(indianCensusCSVList);
+        FileWriter writer = new FileWriter("C:\\Users\\Shravya\\Desktop\\AreaWiseSortedCensusData.json");
+        writer.write(sortedStateCensusJson);
+        writer.close();
+        return sortedStateCensusJson;
+    }
+
 
     private <E> void sortPopulation(List<E> csvList, Comparator<E> comparator) {
         for (int i = 0; i < csvList.size() - 1; i++) {
