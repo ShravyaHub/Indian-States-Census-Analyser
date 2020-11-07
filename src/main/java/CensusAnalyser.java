@@ -37,6 +37,16 @@ public class CensusAnalyser {
         }
     }
 
+    public int loadDataWithCommonsCSV(String csvFilePath) throws CensusAnalyserException {
+            try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
+                ICommonsCSVBuilder commonsCSVBuilder = CommonsCSVBuilderFactory.createCSVBuilder();
+                List<CSVRecord> csvFileList = commonsCSVBuilder.getCSVFileList(reader);
+                return csvFileList.size();
+            } catch (IOException ioException) {
+                throw new CensusAnalyserException("Enter proper file path", CensusAnalyserException.ExceptionType.NO_SUCH_FILE);
+            }
+    }
+
     public String getStateWiseSortedCensusData() throws CensusAnalyserException {
         if(indianCensusCSVList == null || indianCensusCSVList.size() == 0) {
             throw new CensusAnalyserException("No census data", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
@@ -61,6 +71,15 @@ public class CensusAnalyser {
         if(indianCensusCSVList == null || indianCensusCSVList.size() == 0)
             throw new CensusAnalyserException("No census data", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         Comparator<IndianCensusCSV> stateCensusComparator = Comparator.comparing(stateCensus -> stateCensus.population);
+        this.sortPopulation(indianCensusCSVList, stateCensusComparator);
+        String sortedStateCensusJson = new Gson().toJson(indianCensusCSVList);
+        return sortedStateCensusJson;
+    }
+
+    public String getDensityWiseStateCensusData() throws CensusAnalyserException {
+        if (indianCensusCSVList == null || indianCensusCSVList.size() == 0)
+            throw new CensusAnalyserException("No CSV Data Found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        Comparator<IndianCensusCSV> stateCensusComparator = Comparator.comparing(stateCensus -> stateCensus.densityPerSqKm);
         this.sortPopulation(indianCensusCSVList, stateCensusComparator);
         String sortedStateCensusJson = new Gson().toJson(indianCensusCSVList);
         return sortedStateCensusJson;

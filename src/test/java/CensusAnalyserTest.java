@@ -25,6 +25,8 @@ public class CensusAnalyserTest {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             int numberOfRecords = censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
             Assert.assertEquals(29, numberOfRecords);
+            numberOfRecords = censusAnalyser.loadDataWithCommonsCSV(INDIA_CENSUS_CSV_FILE_PATH);
+            Assert.assertEquals(29, numberOfRecords);
         } catch(CensusAnalyserException ignored) { }
     }
 
@@ -83,6 +85,8 @@ public class CensusAnalyserTest {
         try {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             int numberOfRecords = censusAnalyser.loadStateCodeData(STATE_CODE_CSV_FILE_PATH);
+            Assert.assertEquals(37, numberOfRecords);
+            numberOfRecords = censusAnalyser.loadDataWithCommonsCSV(STATE_CODE_CSV_FILE_PATH);
             Assert.assertEquals(37, numberOfRecords);
         } catch(CensusAnalyserException ignored) { }
     }
@@ -172,6 +176,19 @@ public class CensusAnalyserTest {
             IndianCensusCSV[] indianCensusCSV = new Gson().fromJson(stateCensusDataSortedByPopulation, IndianCensusCSV[].class);
             Assert.assertEquals("Uttar Pradesh", indianCensusCSV[0].state);
         } catch (CensusAnalyserException censusAnalyserException) {
+            censusAnalyserException.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedByDensity_ShouldReturnSortedOrder() {
+        try {
+            CensusAnalyser censusAnalyzer = new CensusAnalyser();
+            censusAnalyzer.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            String stateCensusDataSortedByDensity = censusAnalyzer.getDensityWiseStateCensusData();
+            IndianCensusCSV[] indianCensusCSVS = new Gson().fromJson(stateCensusDataSortedByDensity, IndianCensusCSV[].class);
+            Assert.assertEquals("Bihar", indianCensusCSVS[0].state);
+        }catch (CensusAnalyserException censusAnalyserException) {
             censusAnalyserException.printStackTrace();
         }
     }
